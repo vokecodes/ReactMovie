@@ -35,7 +35,7 @@ class Home extends Component {
     this.setState({
       movies: [],
       loading: true,
-      searchTerm: ""
+      searchTerm
     });
     console.log(searchTerm);
 
@@ -47,20 +47,6 @@ class Home extends Component {
     }
 
     this.fetchItems(endpoint);
-  };
-
-  fetchItems = endpoint => {
-    fetch(endpoint)
-      .then(result => result.json())
-      .then(result => {
-        this.setState({
-          movies: [this.state.movies, ...result.results],
-          heroImage: this.state.heroImage || result.results[0],
-          loading: false,
-          currentPage: result.page,
-          totalPages: result.total_pages
-        });
-      });
   };
 
   loadMoreItems = () => {
@@ -79,15 +65,30 @@ class Home extends Component {
     this.fetchItems(endpoint);
   };
 
+  fetchItems = endpoint => {
+    //ES6 Destructuring
+    // const { movies, heroImage, searchTerm } = this.state;
+
+    fetch(endpoint)
+      .then(result => result.json())
+      .then(result => {
+        this.setState({
+          movies: [...this.state.movies, ...result.results],
+          heroImage: this.state.heroImage || result.results[0],
+          loading: false,
+          currentPage: result.page,
+          totalPages: result.total_pages
+        });
+      });
+  };
+
   render() {
     return (
       <div className="rmdb-home">
         {this.state.heroImage ? (
           <div>
             <HeroImage
-              image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${
-                this.state.heroImage.backdrop_path
-              }`}
+              image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${this.state.heroImage.backdrop_path}`}
               title={this.state.heroImage.original_title}
               text={this.state.heroImage.overview}
             />
